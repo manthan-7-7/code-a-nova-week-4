@@ -1,0 +1,30 @@
+from setuptools import setup, find_packages
+
+setup(
+    name="shieldml",
+    version="1.0.0",
+    description="Real-Time Financial Fraud Detection System",
+    author="ShieldML Team",
+    packages=find_packages(),
+    python_requires=">=3.10",
+    install_requires=[
+        "numpy",
+        "pandas",
+        "scikit-learn",
+        "xgboost",
+        "lightgbm",
+        "imbalanced-learn",
+        "optuna",
+        "shap",
+        "mlflow",
+        "fastapi",
+        "uvicorn[standard]",
+        "pydantic",
+        "pydantic-settings",
+        "joblib",
+        "matplotlib",
+        "seaborn",
+        "httpx",
+        "requests",
+    ],
+)

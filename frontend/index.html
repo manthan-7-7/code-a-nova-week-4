@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShieldML — Real-Time Financial Fraud Detection System</title>
+  <meta name="description" content="Production-grade real-time financial fraud detection with automated feature engineering, ensemble ML, F2 threshold optimization, and SHAP explainability.">
+  
+  <!-- Modern Typography: Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js for interactive client visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-title">ShieldML</span>
+          <span class="brand-badge">PROD</span>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" data-view="view-overview" id="nav-overview">
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </div>
+          <span>Overview & KPIs</span>
+        </li>
+
+        <li class="nav-item" data-view="view-transaction-analysis" id="nav-tx-analysis">
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <span>Transaction Analysis</span>
+        </li>
+
+        <li class="nav-item" data-view="view-single-predict" id="nav-single-predict">
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </div>
+          <span>Real-Time Inference</span>
+        </li>
+
+        <li class="nav-item" data-view="view-batch-predict" id="nav-batch-predict">
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <span>Batch CSV Detection</span>
+        </li>
+
+        <li class="nav-item" data-view="view-models" id="nav-models">
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path>
+              <path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path>
+              <path d="m9.17 14.83-4.24 4.24"></path>
+            </svg>
+          </div>
+          <span>Model Comparison</span>
+        </li>
+
+        <li class="nav-item" data-view="view-explainability" id="nav-explainability">
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
+          <span>SHAP Explainable AI</span>
+        </li>
+
+        <li class="nav-item" data-view="view-monitoring" id="nav-monitoring">
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <span>API Monitoring & SLA</span>
+        </li>
+
+        <li class="nav-item" data-view="view-registry" id="nav-registry">
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+            </svg>
+          </div>
+          <span>Model Registry & Info</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="system-status-indicator">
+          <div class="status-dot"></div>
+          <span id="service-health-text">FastAPI Engine Online</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-wrapper">
+      
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <h1 class="top-bar-title" id="page-title">Overview & Fraud Analytics</h1>
+        
+        <div class="top-bar-actions">
+          <div class="sla-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Target SLA: &lt; 50ms</span>
+          </div>
+
+          <a href="/docs" target="_blank" class="btn btn-secondary btn-sm" id="btn-api-docs">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            Swagger Docs
+          </a>
+        </div>
+      </header>
+
+      <!-- Content Body -->
+      <div class="content-body">
+        
+        <!-- SECTION 1: Overview & Fraud Metrics -->
+        <section id="view-overview" class="view-section active">
+          <div class="grid-kpi">
+            <div class="card">
+              <div class="card-title">Analyzed Transactions</div>
+              <div class="card-value" id="kpi-total-txs">25,000</div>
+              <div class="card-subtext"><span class="text-emerald">● 100% Verified</span> Chronological Data</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">System Fraud Rate</div>
+              <div class="card-value" id="kpi-fraud-rate">2.21%</div>
+              <div class="card-subtext"><span class="text-amber">● Severe Imbalance</span> Handled via Cost-Weighting</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Champion Model F2</div>
+              <div class="card-value" id="kpi-f2-score">0.892</div>
+              <div class="card-subtext"><span class="text-emerald">↑ +14.2%</span> over standard 0.5 threshold</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">P95 Inference Latency</div>
+              <div class="card-value" id="kpi-p95-latency">14.8 ms</div>
+              <div class="card-subtext"><span class="text-emerald">✓ PASS</span> Under 50ms Production SLA</div>
+            </div>
+          </div>
+
+          <!-- Charts Grid -->
+          <div class="grid-2col">
+            <div class="card">
+              <div class="card-title">Real-Time Request Throughput & Latency Trend</div>
+              <div class="chart-box">
+                <canvas id="chart-throughput-trend"></canvas>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Fraud Probability Distribution by Class</div>
+              <div class="chart-box">
+                <canvas id="chart-prob-distribution"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Feed Table -->
+          <div class="card">
+            <div class="card-title">
+              <span>Live Flagged Transactions Stream</span>
+              <button class="btn btn-secondary btn-sm" id="btn-refresh-feed">Refresh Stream</button>
+            </div>
+            <div class="table-container">
+              <table class="table-modern">
+                <thead>
+                  <tr>
+                    <th>Tx ID</th>
+                    <th>Timestamp</th>
+                    <th>User ID</th>
+                    <th>Amount</th>
+                    <th>Merchant</th>
+                    <th>Fraud Probability</th>
+                    <th>Decision</th>
+                    <th>Latency</th>
+                  </tr>
+                </thead>
+                <tbody id="table-live-stream-body">
+                  <tr>
+                    <td colspan="8" style="text-align: center; padding: 24px; color: var(--slate-400);">
+                      Awaiting live transactions...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: Transaction Analysis -->
+        <section id="view-transaction-analysis" class="view-section">
+          <div class="grid-2col">
+            <div class="card">
+              <div class="card-title">Diurnal Circadian Pattern: Fraud Rate by Hour of Day</div>
+              <div class="chart-box">
+                <canvas id="chart-circadian-fraud"></canvas>
+              </div>
+              <div class="card-subtext" style="margin-top: 14px;">
+                Shows sharp anomaly spike between <strong>01:00 and 05:00</strong> captured by cyclic sine/cosine encodings.
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Subpopulation Slice Analysis: Fraud Detection by Amount Tier</div>
+              <div class="chart-box">
+                <canvas id="chart-slice-amount"></canvas>
+              </div>
+              <div class="card-subtext" style="margin-top: 14px;">
+                Evaluates recall across Micro (&lt;$25), Small ($25-$100), Medium ($100-$500), and High-Ticket (&gt;$500).
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Temporal Integrity & Leakage Prevention Architecture</div>
+            <div style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.7;">
+              <p>ShieldML strictly enforces <strong>zero future-data leakage</strong> across all data processing and evaluation stages:</p>
+              <ul style="margin: 12px 0 12px 24px;">
+                <li><strong>Chronological Splits:</strong> Training (70%), Validation (15%), and Testing (15%) are separated by non-overlapping temporal cutoffs.</li>
+                <li><strong>Strict Past-Looking Velocity:</strong> 1h, 24h, and 7d rolling counts are computed backwards in time for each user.</li>
+                <li><strong>Training-Only Statistics:</strong> Merchant mean/std amount baselines and device frequencies are fitted strictly on the training partition.</li>
+                <li><strong>Untampered Test Evaluation:</strong> SMOTE/ADASYN resampling is restricted to training data only. Test set retains raw class distribution.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: Single-Transaction Fraud Prediction -->
+        <section id="view-single-predict" class="view-section">
+          <div class="grid-2col">
+            
+            <!-- Left: Transaction Form -->
+            <div class="card">
+              <div class="card-title">
+                <span>Transaction Evaluation Input</span>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-secondary btn-sm" id="preset-legit">Preset: Legit</button>
+                  <button class="btn btn-secondary btn-sm" id="preset-fraud">Preset: High Risk</button>
+                  <button class="btn btn-secondary btn-sm" id="preset-borderline">Preset: Borderline</button>
+                </div>
+              </div>
+
+              <form id="form-single-predict">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Transaction ID</label>
+                    <input type="text" class="form-control" id="inp-tx-id" value="tx_sim_89211">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Customer User ID</label>
+                    <input type="text" class="form-control" id="inp-user-id" value="usr_00284">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Amount ($ USD)</label>
+                    <input type="number" step="0.01" class="form-control" id="inp-amount" value="580.00">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Merchant ID</label>
+                    <input type="text" class="form-control" id="inp-merchant-id" value="merch_0014">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Merchant Category</label>
+                    <select class="form-control" id="inp-merchant-cat">
+                      <option value="electronics" selected>electronics</option>
+                      <option value="retail">retail</option>
+                      <option value="grocery">grocery</option>
+                      <option value="travel">travel</option>
+                      <option value="dining">dining</option>
+                      <option value="financial_services">financial_services</option>
+                      <option value="gas_station">gas_station</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Channel</label>
+                    <select class="form-control" id="inp-channel">
+                      <option value="web" selected>web</option>
+                      <option value="mobile_app">mobile_app</option>
+                      <option value="pos_terminal">pos_terminal</option>
+                      <option value="atm">atm</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Device ID</label>
+                    <input type="text" class="form-control" id="inp-device-id" value="dev_new_9918">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Distance from Home (km)</label>
+                    <input type="number" step="0.1" class="form-control" id="inp-distance" value="125.0">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Txs in Past 1 Hour</label>
+                    <input type="number" class="form-control" id="inp-vel-1h" value="4">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Txs in Past 24 Hours</label>
+                    <input type="number" class="form-control" id="inp-vel-24h" value="7">
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;" id="btn-submit-predict">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                  </svg>
+                  Score Transaction with ShieldML
+                </button>
+              </form>
+            </div>
+
+            <!-- Right: Real-Time Results -->
+            <div class="card" id="card-inference-results">
+              <div class="card-title">Model Risk Assessment</div>
+              
+              <div class="risk-meter-container">
+                <div class="risk-circle" id="risk-gauge-circle">
+                  <div class="risk-circle-inner">
+                    <div class="risk-percentage" id="res-prob-pct">--%</div>
+                    <div class="risk-label">Fraud Probability</div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+                  <span class="badge" id="res-action-badge">READY</span>
+                  <span class="sla-badge" id="res-latency-badge">Latency: -- ms</span>
+                </div>
+                <div class="card-subtext" id="res-threshold-note">Decision Threshold: --</div>
+              </div>
+
+              <!-- Factor Breakdown -->
+              <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: var(--slate-700); margin-bottom: 8px;">
+                  SHAP Local Attribution Factors
+                </div>
+
+                <div id="shap-factors-list" class="factor-bar-list">
+                  <div style="color: var(--slate-400); font-size: 0.82rem; text-align: center; padding: 12px;">
+                    Submit a transaction to evaluate SHAP risk drivers.
+                  </div>
+                </div>
+
+                <div id="shap-narrative-box" style="margin-top: 14px; padding: 12px; background-color: var(--slate-50); border-radius: var(--radius-md); font-size: 0.82rem; color: var(--slate-700); line-height: 1.5; display: none;">
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- SECTION 4: Batch CSV Detection -->
+        <section id="view-batch-predict" class="view-section">
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-title">Batch Financial Transactions Upload & Scoring</div>
+            <p style="font-size: 0.86rem; color: var(--slate-600); margin-bottom: 16px;">
+              Upload bulk CSV files for vectorized fraud classification. ShieldML processes thousands of transactions with high throughput.
+            </p>
+
+            <div class="dropzone" id="csv-dropzone">
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 12px; color: var(--emerald-500);">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <div style="font-weight: 700; color: var(--slate-800); margin-bottom: 4px;">Drag & Drop CSV File Here</div>
+              <div style="font-size: 0.78rem; color: var(--slate-500); margin-bottom: 14px;">or click to browse from your device</div>
+              <input type="file" id="batch-file-input" accept=".csv" style="display: none;">
+              
+              <button class="btn btn-secondary btn-sm" id="btn-load-sample-csv">
+                ⚡ Load Sample Batch File (data/sample_batch.csv)
+              </button>
+            </div>
+
+            <!-- Batch Progress / Summary -->
+            <div id="batch-summary-kpis" style="display: none; margin-top: 24px;" class="grid-kpi">
+              <div class="card" style="background-color: var(--slate-50);">
+                <div class="card-title">Total Records</div>
+                <div class="card-value" id="batch-total">0</div>
+              </div>
+              <div class="card" style="background-color: var(--slate-50);">
+                <div class="card-title">Flagged Fraud</div>
+                <div class="card-value text-red" id="batch-flagged">0</div>
+              </div>
+              <div class="card" style="background-color: var(--slate-50);">
+                <div class="card-title">Batch Fraud Rate</div>
+                <div class="card-value" id="batch-rate">0.0%</div>
+              </div>
+              <div class="card" style="background-color: var(--slate-50);">
+                <div class="card-title">Total Processing Time</div>
+                <div class="card-value text-emerald" id="batch-time">0 ms</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Batch Table Preview -->
+          <div class="card" id="card-batch-results" style="display: none;">
+            <div class="card-title">
+              <span>Scored Transaction Results</span>
+              <button class="btn btn-secondary btn-sm" id="btn-download-scored-csv">
+                Download Scored CSV
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="table-modern">
+                <thead>
+                  <tr>
+                    <th>Tx ID</th>
+                    <th>User</th>
+                    <th>Amount ($)</th>
+                    <th>Merchant</th>
+                    <th>Fraud Probability</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-results-tbody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5: Model Comparison & Performance -->
+        <section id="view-models" class="view-section">
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-title">Held-Out Test Set Model Leaderboard (Untouched Data)</div>
+            <p style="font-size: 0.85rem; color: var(--slate-600); margin-bottom: 14px;">
+              Models evaluated on held-out test partition strictly chronologically after training & validation sets. Decision thresholds frozen from validation F2 optimization.
+            </p>
+            <div class="table-container">
+              <table class="table-modern" id="table-models-leaderboard">
+                <thead>
+                  <tr>
+                    <th>Model Architecture</th>
+                    <th>Threshold</th>
+                    <th>ROC-AUC</th>
+                    <th>PR-AUC</th>
+                    <th>F2-Score</th>
+                    <th>Recall</th>
+                    <th>Precision</th>
+                    <th>False Negatives</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="models-leaderboard-tbody">
+                  <!-- Populated dynamically via /api/metadata -->
+                  <tr><td colspan="9" style="text-align: center; padding: 20px;">Loading leaderboard metrics...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid-2col">
+            <div class="card">
+              <div class="card-title">Receiver Operating Characteristic (ROC) Comparison</div>
+              <div class="image-preview-card">
+                <img src="/api/plots/roc_curve.png" alt="ROC Curves Comparison" id="img-roc-curve">
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Precision-Recall (PR) Curves (Imbalance Metric)</div>
+              <div class="image-preview-card">
+                <img src="/api/plots/precision_recall_curve.png" alt="Precision-Recall Curves" id="img-pr-curve">
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2col">
+            <div class="card">
+              <div class="card-title">Champion Confusion Matrix on Test Set</div>
+              <div class="image-preview-card">
+                <img src="/api/plots/confusion_matrix.png" alt="Confusion Matrix" id="img-confusion-matrix">
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Validation F2-Score Threshold Optimization Curve</div>
+              <div class="image-preview-card">
+                <img src="/api/plots/f2_threshold_optimization_curve.png" alt="Threshold Optimization Curve" id="img-threshold-curve">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 6: SHAP Explainable AI -->
+        <section id="view-explainability" class="view-section">
+          <div class="grid-2col" style="margin-bottom: 24px;">
+            <div class="card">
+              <div class="card-title">Global Feature Importance (SHAP TreeExplainer)</div>
+              <div class="image-preview-card">
+                <img src="/api/plots/shap_summary_bar.png" alt="Global SHAP Feature Importance" id="img-shap-global">
+              </div>
+              <div class="card-subtext" style="margin-top: 12px;">
+                Shows top predictors: merchant z-score, 1h/24h transaction velocity, and unfamiliar device flags.
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Case Study 1: Confirmed Fraud Transaction</div>
+              <div class="image-preview-card">
+                <img src="/api/plots/shap_waterfall_tx1_fraud.png" alt="SHAP Waterfall Case 1" id="img-shap-case1">
+              </div>
+              <div class="card-subtext" style="margin-top: 12px;">
+                Elevated risk driven by high 1h velocity, new device, and nocturnal attack timestamp.
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2col">
+            <div class="card">
+              <div class="card-title">Case Study 2: Legitimate Customer Transaction</div>
+              <div class="image-preview-card">
+                <img src="/api/plots/shap_waterfall_tx2_legit.png" alt="SHAP Waterfall Case 2" id="img-shap-case2">
+              </div>
+              <div class="card-subtext" style="margin-top: 12px;">
+                Legitimacy supported by primary device history, typical grocery amount, and low velocity.
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Case Study 3: Borderline Anomaly Assessment</div>
+              <div class="image-preview-card">
+                <img src="/api/plots/shap_waterfall_tx3_borderline.png" alt="SHAP Waterfall Case 3" id="img-shap-case3">
+              </div>
+              <div class="card-subtext" style="margin-top: 12px;">
+                High amount balanced by familiar device and standard daylight business hours.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 7: API Monitoring & Latency (SLA Dashboard) -->
+        <section id="view-monitoring" class="view-section">
+          <div class="grid-kpi">
+            <div class="card">
+              <div class="card-title">Median Latency (P50)</div>
+              <div class="card-value text-emerald" id="mon-p50">-- ms</div>
+              <div class="card-subtext">50% of requests served faster</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">P95 Latency (SLA)</div>
+              <div class="card-value text-emerald" id="mon-p95">-- ms</div>
+              <div class="card-subtext">Target: &lt; 50.0 ms</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Tail Latency (P99)</div>
+              <div class="card-value" id="mon-p99">-- ms</div>
+              <div class="card-subtext">Worst 1% tail execution</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">SLA Compliance Rate</div>
+              <div class="card-value text-emerald" id="mon-compliance">100.0%</div>
+              <div class="card-subtext">Requests adhering to &lt; 50ms</div>
+            </div>
+          </div>
+
+          <div class="grid-2col">
+            <div class="card">
+              <div class="card-title">
+                <span>Empirical Latency Benchmark</span>
+                <button class="btn btn-primary btn-sm" id="btn-trigger-benchmark">
+                  Run 500-Request Benchmark
+                </button>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--slate-600); margin-bottom: 16px;">
+                Executes a live benchmark verifying FastAPI endpoint throughput, feature extraction, model scoring, and explanation generation.
+              </p>
+              <div id="benchmark-status-box" style="padding: 12px; background-color: var(--slate-50); border-radius: var(--radius-md); font-size: 0.82rem; color: var(--slate-700);">
+                Benchmark status: Ready. Click above to benchmark live latency.
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Operational Health & Runtime Footprint</div>
+              <div class="table-container">
+                <table class="table-modern">
+                  <tbody>
+                    <tr><td><strong>Model Preload Status</strong></td><td id="sys-model-status" class="text-emerald">Active / Preloaded</td></tr>
+                    <tr><td><strong>Champion Model Type</strong></td><td id="sys-model-type">--</td></tr>
+                    <tr><td><strong>Process Memory Footprint</strong></td><td id="sys-mem-usage">-- MB</td></tr>
+                    <tr><td><strong>Total Requests Served</strong></td><td id="sys-total-requests">--</td></tr>
+                    <tr><td><strong>Error Rate (5xx/4xx)</strong></td><td id="sys-error-count">0 (0.00%)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 8: Model Registry & Info -->
+        <section id="view-registry" class="view-section">
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-title">MLflow Model Registry: Champion Asset Specification</div>
+            <div class="table-container">
+              <table class="table-modern">
+                <tbody>
+                  <tr><td><strong>Registered Model Name</strong></td><td><code>ShieldML-Champion</code></td></tr>
+                  <tr><td><strong>Registry Version</strong></td><td><code>v1.0.0</code></td></tr>
+                  <tr><td><strong>Architecture Type</strong></td><td id="reg-model-type">--</td></tr>
+                  <tr><td><strong>Frozen Optimal Threshold</strong></td><td id="reg-threshold">--</td></tr>
+                  <tr><td><strong>Optimization Objective</strong></td><td>F2-Score (β = 2.0, prioritizing Recall)</td></tr>
+                  <tr><td><strong>Feature Dimension</strong></td><td id="reg-feature-count">-- input features</td></tr>
+                  <tr><td><strong>Training Timestamp</strong></td><td id="reg-train-timestamp">--</td></tr>
+                  <tr><td><strong>MLflow Tracking URI</strong></td><td><code>file:./mlruns</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Preloaded Feature Space Pipeline</div>
+            <p style="font-size: 0.85rem; color: var(--slate-600); margin-bottom: 12px;">
+              Input feature names extracted and normalized by <code>FraudFeaturePipeline</code>:
+            </p>
+            <div class="code-box" id="reg-feature-list">
+              Loading feature definitions...
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Application Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

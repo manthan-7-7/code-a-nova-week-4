@@ -1,0 +1,21 @@
+{
+  "benchmark_timestamp": "2026-10-15 23:16:22",
+  "total_requests": 500,
+  "warmup_requests": 25,
+  "success_rate_pct": 0.0,
+  "target_sla_ms": 50.0,
+  "sla_compliance_pct": 100.0,
+  "target_met": true,
+  "throughput_rps": 354.22,
+  "latency_percentiles_ms": {
+    "min": 2.12,
+    "p50_median": 2.42,
+    "p75": 3.05,
+    "p90": 3.95,
+    "p95": 4.52,
+    "p99": 6.37,
+    "max": 7.32,
+    "mean": 2.82,
+    "std": 0.88
+  }
+}

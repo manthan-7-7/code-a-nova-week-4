@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  shieldml-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shieldml-service
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - TARGET_LATENCY_MS=50.0
+      - MLFLOW_TRACKING_URI=file:/app/mlruns
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./data:/app/data
+      - ./mlruns:/app/mlruns
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Optional local MLflow tracking server UI
+  mlflow-ui:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: shieldml-mlflow-ui
+    ports:
+      - "5000:5000"
+    command: mlflow ui --host 0.0.0.0 --port 5000 --backend-store-uri file:/app/mlruns
+    volumes:
+      - ./mlruns:/app/mlruns
+    restart: unless-stopped

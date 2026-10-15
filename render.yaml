@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: shieldml-api
+    runtime: python
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt && pip install -e ."
+    startCommand: "uvicorn shieldml.api.app:app --host 0.0.0.0 --port $PORT --workers 1"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: APP_ENV
+        value: production
+      - key: TARGET_LATENCY_MS
+        value: "50.0"
+      - key: MLFLOW_TRACKING_URI
+        value: "file:./mlruns"
+      - key: MLFLOW_EXPERIMENT_NAME
+        value: "ShieldML-Fraud-Detection"
+    healthCheckPath: /health
+    autoDeploy: true
